@@ -20,7 +20,10 @@ bool isLeapYear(short Year)
     // if year is divisible by 4 AND not divisible by 100
     // OR if year is divisible by 400
     // then it is a leap year
-    return (Year % 4 == 0 && Year % 100 != 0) || (Year % 400 == 0);
+
+    // في الجزء الثاني من الكود لديك: (Year % 100 == 0 && Year % 400 == 0) رياضياً، أي رقم يقبل القسمة على 400 فهو بالضرورة يقبل القسمة على 100.
+    
+    return (Year % 4 == 0 && Year % 100 != 0) || (Year % 400 == 0); // ila kant (Year % 400 == 0) rah already (Year % 100 == 0)
 }
 
 int main()
