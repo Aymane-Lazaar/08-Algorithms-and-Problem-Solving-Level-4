@@ -48,7 +48,49 @@ string DayShortName(short DayOfWeekOrder)
     return arrDayNames[DayOfWeekOrder];
 }
 
-void MonthCalender(short Month, short Year)
+void PrintMonthCalendar(short Month, short Year)
+{
+    int NumberOfDays;
+
+    // Index of the day from 0 to 6
+    int current = DayOfWeekOrder(1, Month, Year);
+
+    NumberOfDays = NumberOfDaysInAMonth(Year, Month);
+
+    // Print the current month name
+    printf("\n _______________%s_______________\n\n",
+           MonthShortName(Month).c_str());
+    /*
+        `.c_str()` is a function of the `std::string` class
+        Its function is to convert `std::string` to a C-style string (`const char*`).
+        This is important if you want to use `printf` or any function that requires `char*`.
+    */
+
+    // Print the columns
+    printf("  Sun  Mon  Tue  Wed  Thu  Fri  Sat\n");
+
+    // Print appropriate spaces
+    short i;
+
+    for (i = 0; i < current; i++)
+        printf("     ");
+
+    for (short j = 1; j <= NumberOfDays; j++)
+    {
+        printf("%5d", j); //%5d in printf means: Print the correct number within a 5-digit field. If the number is shorter, place blank spaces on the left.
+
+        if (++i == 7)
+        {
+            i = 0;
+            printf("\n");
+        }
+    }
+
+    printf("\n _________________________________\n");
+}
+
+/*My Solution
+void PrintMonthCalender(short Month, short Year)
 {
     short NumberOfDays = NumberOfDaysInAMonth(Year, Month);
     cout << "\n\n_______________________" << MonthShortName(Month) << "_______________________\n\n";
@@ -57,21 +99,26 @@ void MonthCalender(short Month, short Year)
 
     short Day = DayOfWeekOrder(1, Month, Year);
 
-    for (short i = 0; i < Day; i++)
+    short Counter = Day + 1;
+
+    cout << setw(Counter * 5);
+
+    for (short i = 1; i <= NumberOfDays; i++)
     {
-        if (i != Day)
+        cout << i << setw(5);
+        if (Counter == 7)
         {
-            cout << setw(5);
+            cout << endl;
+            Counter = 1;
         }
         else
         {
-            break;
+            Counter++;
         }
     }
-
-    
-
+    cout << "\n_________________________________________________";
 }
+*/
 
 short ReadMonth()
 {
@@ -94,7 +141,25 @@ int main()
     short Year = ReadYear();
     short Month = ReadMonth();
 
-    MonthCalender(Month, Year);
+    PrintMonthCalendar(Month, Year);
+
+    // My Solution
+    // PrintMonthCalender(Month, Year);
+
+    /*setw(n)
+
+The `setw(n)` operator in C++ is used with the `cout` function to specify the field width of the output.
+
+`setw(n)` sets the length of the field to be printed to at least n digits.
+
+If the number or text to be printed is shorter than n digits, spaces are added before the value (default: right-aligned).
+
+If the number or text is longer than n digits, it is printed in full without truncating or adding spaces.
+
+*/
+
+    // cout<<setw(6);
+    // cout<<2<<setw(6);
 
     return 0;
 }
