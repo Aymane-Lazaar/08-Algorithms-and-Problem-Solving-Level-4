@@ -93,7 +93,7 @@ int CalculDiffrenace(stDate Date1, stDate Date2)
             {
                 return Days += Date2.Day - Date1.Day;
             }
-            Days += NumberOfDaysInAMonth(Date1.Year, Date1.Month);//31 
+            Days += NumberOfDaysInAMonth(Date1.Year, Date1.Month);
 
             Date1.Month++;
 
@@ -170,4 +170,5 @@ int main()
 
     return 0;
 }
+
 
