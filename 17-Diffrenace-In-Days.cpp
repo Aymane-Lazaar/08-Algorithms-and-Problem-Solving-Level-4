@@ -68,7 +68,7 @@ bool IsDate1BeforeDate2(stDate Date1, stDate Date2)
     return (Date1.Year < Date2.Year) ? true : ((Date1.Year == Date2.Year) ? (Date1.Month < Date2.Month ? true : (Date1.Month == Date2.Month ? Date1.Day < Date2.Day : false)) : false);
 }
 
-// /* My Solution
+ /* My Solution
 bool IsDate1EqualDate2(stDate Date1, stDate Date2)
 {
     return (Date1.Year == Date2.Year) ? ((Date1.Month == Date2.Month) ? ((Date1.Day == Date2.Day) ? true : false) : false) : false;
@@ -107,7 +107,7 @@ int CalculDiffrenace(stDate Date1, stDate Date2)
 
     return Days;
 }
-// */
+ */
 
 bool IsLastDayInMonth(stDate Date)
 {
@@ -163,10 +163,11 @@ int main()
     stDate Date2 = ReadFullDate();
 
     cout << "\nDiffrence is: "
-         << CalculDiffrenace(Date1, Date2) << " Day(s).";
+         << GetDifferenceInDays(Date1, Date2) << " Day(s).";
 
-    // cout << "\nDiffrence (Including End Day) is: "
-    //      << GetDifferenceInDays(Date1, Date2, true) << " Day(s).";
+    cout << "\nDiffrence (Including End Day) is: "
+         << GetDifferenceInDays(Date1, Date2, true) << " Day(s).";
 
     return 0;
 }
+
