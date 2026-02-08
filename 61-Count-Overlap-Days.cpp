@@ -186,21 +186,19 @@ int CountOverlapDays(stPeriod Period1, stPeriod Period2)
 
     if (Period1Length < Period2Length)
     {
-        while (IsDate1BeforeDate2(Period1.StartDate, Period1.EndDate))
+        while (IsDate1BeforeDate2(Period1.StartDate, Period1.EndDate) || IsDate1EqualDate2(Period1.StartDate, Period1.EndDate))
         {
             if (IsDateInPeriod(Period1.StartDate, Period2))
                 OverlapDays++;
-
             Period1.StartDate = IncreaseDateByOneDay(Period1.StartDate);
         }
     }
     else
     {
-        while (IsDate1BeforeDate2(Period2.StartDate, Period2.EndDate))
+        while (IsDate1BeforeDate2(Period2.StartDate, Period2.EndDate) || IsDate1EqualDate2(Period1.StartDate, Period1.EndDate))
         {
             if (IsDateInPeriod(Period2.StartDate, Period1))
                 OverlapDays++;
-                
             Period2.StartDate = IncreaseDateByOneDay(Period2.StartDate);
         }
     }
