@@ -1193,12 +1193,12 @@ void Login()
 
 int main()
 {
-    // ShowMainMenue();
+    ShowMainMenue();
 
-    cout << (48 | 1);
-    // 0001
-    //
+    // cout << (48 | 1);
+    
 
-    // system("pause>0");
+    system("pause>0");
     return 0;
 }
+
