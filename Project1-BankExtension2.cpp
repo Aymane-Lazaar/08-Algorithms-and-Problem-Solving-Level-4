@@ -148,6 +148,9 @@ sClient ReadNewClient()
     cout << "Enter Phone? ";
     getline(cin, Client.Phone);
 
+    cout << "Enter AccountBalance? ";
+    cin >> Client.AccountBalance;
+
     return Client;
 }
 
@@ -1073,11 +1076,20 @@ vector<sUsers> SaveUsersDataToFile(string FileName, vector<sUsers> vUsers)
     return vUsers;
 }
 
-bool DeleteUserByAccountNumber(string Username, vector<sUsers> &vUsers)
+bool DeleteUserByAccountNumber(string Username, vector<sUsers> &vUsers, sUsers CurrentUser)
 {
 
     sUsers User;
     char Answer = 'n';
+
+    for (sUsers &U : vUsers)
+    {
+        if (U.Name == Username && U.Permissions == -1)
+        {
+            cout << "You cannot Delet This User.";
+            GoBackToMangeUserMenue(CurrentUser);
+        }
+    }
 
     if (FindUserByUserName(Username, vUsers, User))
     {
@@ -1115,7 +1127,7 @@ string ReadUserName()
     return Name;
 }
 
-void ShowDeleteUserScreen()
+void ShowDeleteUserScreen(sUsers User)
 {
     cout << "\n-----------------------------------\n";
     cout << "\tDelete User Screen";
@@ -1123,7 +1135,85 @@ void ShowDeleteUserScreen()
 
     vector<sUsers> vUsers = LoadUsersDataFromFile(UsersFileName);
     string UserName = ReadUserName();
-    DeleteUserByAccountNumber(UserName, vUsers);
+    DeleteUserByAccountNumber(UserName, vUsers, User);
+}
+
+sUsers ChangeUserRecord(string User)
+{
+    sUsers sUser;
+
+    sUser.Name = User;
+
+    cout << "Enter Password? ";
+    getline(cin >> ws, sUser.Password);
+
+    sUser.Permissions = ReadPermissionsToSet();
+
+    return sUser;
+}
+
+bool UpdateUserByUserName(string UserName, vector<sUsers> &vUsers)
+{
+
+    sUsers User;
+    char Answer = 'n';
+
+    if (FindUserByUserName(UserName, vUsers, User))
+    {
+
+        PrintUserCard(User);
+        cout << "\n\nAre you sure you want update this user? y/n ? ";
+        cin >> Answer;
+        if (Answer == 'y' || Answer == 'Y')
+        {
+
+            for (sUsers &U : vUsers)
+            {
+                if (U.Name == UserName)
+                {
+                    U = ChangeUserRecord(UserName);
+                    break;
+                }
+            }
+
+            SaveUsersDataToFile(UsersFileName, vUsers);
+
+            cout << "\n\nUser Updated Successfully.";
+            return true;
+        }
+    }
+    else
+    {
+        cout << "\nUser with Name (" << UserName << ") is Not Found!";
+        return false;
+    }
+    return false;
+}
+
+void ShowUpdateUserScreen()
+{
+    cout << "\n-----------------------------------\n";
+    cout << "\tUpdate User Info Screen";
+    cout << "\n-----------------------------------\n";
+
+    vector<sUsers> vUsers = LoadUsersDataFromFile(UsersFileName);
+    string UserName = ReadUserName();
+    UpdateUserByUserName(UserName, vUsers);
+}
+
+void ShowFindUserScreen()
+{
+    cout << "\n-----------------------------------\n";
+    cout << "\tFind User Screen";
+    cout << "\n-----------------------------------\n";
+
+    vector<sUsers> vUsers = LoadUsersDataFromFile(UsersFileName);
+    sUsers sUser;
+    string UserName = ReadUserName();
+    if (FindUserByUserName(UserName, vUsers, sUser))
+        PrintUserCard(sUser);
+    else
+        cout << "\nUser with Name[" << UserName << "] is not found!";
 }
 
 void PerfromMangeUserMenueOption(enMangeUserMenueOptions MangeUserMenueOption, sUsers User)
@@ -1146,19 +1236,19 @@ void PerfromMangeUserMenueOption(enMangeUserMenueOptions MangeUserMenueOption, s
 
     case enMangeUserMenueOptions::eDeleteUser:
         system("cls");
-        ShowDeleteUserScreen();
+        ShowDeleteUserScreen(User);
         GoBackToMangeUserMenue(User);
         break;
 
     case enMangeUserMenueOptions::eUpdateUser:
         system("cls");
-        ShowUpdateClientScreen();
+        ShowUpdateUserScreen();
         GoBackToMangeUserMenue(User);
         break;
 
     case enMangeUserMenueOptions::eFindUser:
         system("cls");
-        ShowFindClientScreen();
+        ShowFindUserScreen();
         GoBackToMangeUserMenue(User);
         break;
 
@@ -1310,8 +1400,6 @@ bool FindUserByUsernameAndPassword(string Name, string Password, vector<sUsers> 
     }
     return false;
 }
-
-
 
 string ReadUserPassword()
 {
