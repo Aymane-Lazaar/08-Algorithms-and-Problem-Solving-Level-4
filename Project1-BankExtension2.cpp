@@ -805,7 +805,7 @@ vector<sUsers> LoadUsersDataFromFile(string FileName)
     return vUsers;
 }
 
-void ShowListUsers()
+void ShowListUsersScreen()
 {
 
     vector<sUsers> vUsers = LoadUsersDataFromFile(UsersFileName);
@@ -895,6 +895,8 @@ short ReadPermissionsToSet()
     if (toupper(acces) == 'Y')
         return enPermissios::enFullAcces;
 
+    cout << "Do you want to give access to : \n ";
+
     cout << "\nShow Client List? y/n? ";
     cin >> acces;
 
@@ -963,7 +965,7 @@ sUsers ReadNewUser()
     return User;
 }
 
-string ConvertRecordToLineUsers(sUsers User, string Seperator = "#//#")
+string ConvertUserRecordToLine(sUsers User, string Seperator = "#//#")
 {
 
     string stUserRecord = "";
@@ -979,7 +981,7 @@ void AddNewUser()
 {
     sUsers User;
     User = ReadNewUser();
-    AddDataLineToFile(UsersFileName, ConvertRecordToLineUsers(User));
+    AddDataLineToFile(UsersFileName, ConvertUserRecordToLine(User));
 }
 
 void AddNewUsers()
@@ -1065,7 +1067,7 @@ vector<sUsers> SaveUsersDataToFile(string FileName, vector<sUsers> vUsers)
             if (U.MarkForDelete == false)
             {
                 // we only write records that are not marked for delete.
-                DataLine = ConvertRecordToLineUsers(U);
+                DataLine = ConvertUserRecordToLine(U);
                 MyFile << DataLine << endl;
             }
         }
@@ -1223,7 +1225,7 @@ void PerfromMangeUserMenueOption(enMangeUserMenueOptions MangeUserMenueOption, s
     case enMangeUserMenueOptions::eListUsers:
     {
         system("cls");
-        ShowListUsers();
+        ShowListUsersScreen();
         GoBackToMangeUserMenue(User);
         break;
     }
@@ -1386,8 +1388,10 @@ void ShowLoginScreen()
     cout << "\n-----------------------------------\n";
 }
 
-bool FindUserByUsernameAndPassword(string Name, string Password, vector<sUsers> vUsers, sUsers &User)
+bool FindUserByUsernameAndPassword(string Name, string Password, sUsers &User)
 {
+
+    vector<sUsers> vUsers = LoadUsersDataFromFile(UsersFileName);
 
     for (sUsers &e : vUsers)
     {
@@ -1413,14 +1417,13 @@ string ReadUserPassword()
 void Login()
 {
     ShowLoginScreen();
-    vector<sUsers> vUsers = LoadUsersDataFromFile(UsersFileName);
 
     string Name = ReadUserName();
     string Password = ReadUserPassword();
 
     sUsers User;
 
-    while (!FindUserByUsernameAndPassword(Name, Password, vUsers, User))
+    while (!FindUserByUsernameAndPassword(Name, Password, User))
     {
         system("cls");
         cout << "Invalid Username/Password!";
