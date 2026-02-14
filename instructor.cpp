@@ -16,12 +16,6 @@ struct sUsers
     bool MarkForDelete = false;
 };
 
-void ShowMainMenue();
-
-void Login();
-void ShowMangeUsersMenue();
-void ShowTransactionsMenue();
-
 sUsers CurrentUser;
 
 struct sClient
@@ -33,6 +27,25 @@ struct sClient
     double AccountBalance;
     bool MarkForDelete = false;
 };
+
+enum enPermissios
+{
+    enFullAcces = -1,
+    enShowClientList = 1,
+    enAddNewClient = 2,
+    enDeleteClient = 4,
+    enUpdateClient = 8,
+    enFindClient = 16,
+    enTransactions = 32,
+    enMangeUsers = 64
+};
+
+void ShowMainMenue();
+
+void Login();
+void ShowMangeUsersMenue();
+void ShowTransactionsMenue();
+bool CheckAccessPermission(enPermissios Permission);
 
 vector<string> SplitString(string S1, string Delim)
 {
@@ -202,8 +215,21 @@ void PrintClientRecordBalanceLine(sClient Client)
     cout << "| " << setw(12) << left << Client.AccountBalance;
 }
 
+void ShowAccessDeniedMessage()
+{
+    cout << "\n------------------------------------\n";
+    cout << "Access Denied, \nYou dont Have Permission To Do this,\nPlease Conact Your Admin.";
+    cout << "\n------------------------------------\n";
+}
+
 void ShowAllClientsScreen()
 {
+
+    if (!CheckAccessPermission(enPermissios::enShowClientList))
+    {
+        ShowAccessDeniedMessage();
+        return;
+    }
 
     vector<sClient> vClients = LoadCleintsDataFromFile(ClientsFileName);
 
@@ -512,6 +538,12 @@ string ReadClientAccountNumber()
 
 void ShowDeleteClientScreen()
 {
+    if (!CheckAccessPermission(enPermissios::enDeleteClient))
+    {
+        ShowAccessDeniedMessage();
+        return;
+    }
+
     cout << "\n-----------------------------------\n";
     cout << "\tDelete Client Screen";
     cout << "\n-----------------------------------\n";
@@ -523,6 +555,13 @@ void ShowDeleteClientScreen()
 
 void ShowUpdateClientScreen()
 {
+
+    if (!CheckAccessPermission(enPermissios::enUpdateClient))
+    {
+        ShowAccessDeniedMessage();
+        return;
+    }
+
     cout << "\n-----------------------------------\n";
     cout << "\tUpdate Client Info Screen";
     cout << "\n-----------------------------------\n";
@@ -534,6 +573,12 @@ void ShowUpdateClientScreen()
 
 void ShowAddNewClientsScreen()
 {
+    if (!CheckAccessPermission(enPermissios::enAddNewClient))
+    {
+        ShowAccessDeniedMessage();
+        return;
+    }
+
     cout << "\n-----------------------------------\n";
     cout << "\tAdd New Clients Screen";
     cout << "\n-----------------------------------\n";
@@ -543,6 +588,13 @@ void ShowAddNewClientsScreen()
 
 void ShowFindClientScreen()
 {
+
+    if (!CheckAccessPermission(enPermissios::enFindClient))
+    {
+        ShowAccessDeniedMessage();
+        return;
+    }
+
     cout << "\n-----------------------------------\n";
     cout << "\tFind Client Screen";
     cout << "\n-----------------------------------\n";
@@ -727,6 +779,13 @@ void PerfromTranactionsMenueOption(enTransactionsMenueOptions TransactionMenueOp
 
 void ShowTransactionsMenue()
 {
+    if (!CheckAccessPermission(enPermissios::enTransactions))
+    {
+        ShowAccessDeniedMessage();
+        GoBackToMainMenue();
+        return;
+    }
+
     system("cls");
     cout << "===========================================\n";
     cout << "\t\tTransactions Menue Screen\n";
@@ -873,18 +932,6 @@ bool UserExistsByUserName(string Name, string FileName)
 
     return false;
 }
-
-enum enPermissios
-{
-    enFullAcces = -1,
-    enShowClientList = 1,
-    enAddNewClient = 2,
-    enDeleteClient = 4,
-    enUpdateClient = 8,
-    enFindClient = 16,
-    enTransactions = 32,
-    enMangeUsers = 64
-};
 
 short ReadPermissionsToSet()
 {
@@ -1265,6 +1312,13 @@ void PerfromMangeUserMenueOption(enMangeUserMenueOptions MangeUserMenueOption)
 
 void ShowMangeUsersMenue()
 {
+    if (!CheckAccessPermission(enPermissios::enMangeUsers))
+    {
+        ShowAccessDeniedMessage();
+        GoBackToMainMenue();
+        return;
+    }
+
     system("cls");
     cout << "===========================================\n";
     cout << "\t\tManage Users Menue Screen\n";
@@ -1279,23 +1333,9 @@ void ShowMangeUsersMenue()
     PerfromMangeUserMenueOption((enMangeUserMenueOptions)ReadMangeUserMenueOption());
 }
 
-enPermissios GetPermission(enMainMenueOptions MainMenueOption)
+bool CheckAccessPermission(enPermissios Permission)
 {
-    // enPermissios Permissios;
-    if (MainMenueOption == 1)
-        return enPermissios::enShowClientList;
-    else if (MainMenueOption == 2)
-        return enPermissios::enAddNewClient;
-    else if (MainMenueOption == 3)
-        return enPermissios::enDeleteClient;
-    else if (MainMenueOption == 4)
-        return enPermissios::enUpdateClient;
-    else if (MainMenueOption == 5)
-        return enPermissios::enFindClient;
-    else if (MainMenueOption == 6)
-        return enPermissios::enTransactions;
-    else if (MainMenueOption == 7)
-        return enPermissios::enMangeUsers;
+    return (CurrentUser.Permissions & Permission) == Permission;
 }
 
 void PerfromMainMenueOption(enMainMenueOptions MainMenueOption)
@@ -1343,10 +1383,10 @@ void PerfromMainMenueOption(enMainMenueOptions MainMenueOption)
         ShowMangeUsersMenue();
         break;
 
-        // case enMainMenueOptions::eLogout:
-        //     system("cls");
-        //     Login();
-        //     break;
+    case enMainMenueOptions::eLogout:
+        system("cls");
+        Login();
+        break;
     }
 }
 
@@ -1439,10 +1479,6 @@ void Login()
 int main()
 {
     Login();
-
-    // cout << (1 & -1);
-    // 0001
-    //
 
     // system("pause>0");
     return 0;
