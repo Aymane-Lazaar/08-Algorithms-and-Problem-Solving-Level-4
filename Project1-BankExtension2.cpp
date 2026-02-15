@@ -874,7 +874,7 @@ bool UserExistsByUserName(string Name, string FileName)
 
 enum enPermissios
 {
-    enFullAcces = -1,
+    enFullAccess = -1,
     enShowClientList = 1,
     enAddNewClient = 2,
     enDeleteClient = 4,
@@ -893,7 +893,7 @@ short ReadPermissionsToSet()
     cin >> acces;
 
     if (toupper(acces) == 'Y')
-        return enPermissios::enFullAcces;
+        return enPermissios::enFullAccess;
 
     cout << "Do you want to give access to : \n ";
 
@@ -1438,5 +1438,10 @@ int main()
 {
     Login();
 
+    // cout << (1 & -1);
+    // 0001
+    //
+
+    // system("pause>0");
     return 0;
 }
