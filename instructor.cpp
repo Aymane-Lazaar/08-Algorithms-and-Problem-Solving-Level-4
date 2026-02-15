@@ -30,6 +30,9 @@ struct sClient
 
 enum enPermissios
 {
+    // الرقم -1 في نظام 8 بت يكون:
+    // 11111111
+
     enFullAcces = -1,
     enShowClientList = 1,
     enAddNewClient = 2,
@@ -1127,19 +1130,16 @@ vector<sUsers> SaveUsersDataToFile(string FileName, vector<sUsers> vUsers)
     return vUsers;
 }
 
-bool DeleteUserByAccountNumber(string Username, vector<sUsers> &vUsers)
+bool DeleteUserByByUsername(string Username, vector<sUsers> &vUsers)
 {
 
     sUsers User;
     char Answer = 'n';
 
-    for (sUsers &U : vUsers)
+    if (Username == "Admin")
     {
-        if (U.Name == Username && U.Permissions == -1)
-        {
-            cout << "You cannot Delet This User.";
-            GoBackToMangeUserMenue();
-        }
+        cout << "\n\nYou cannot Delete This User.";
+        GoBackToMangeUserMenue();
     }
 
     if (FindUserByUserName(Username, vUsers, User))
@@ -1186,7 +1186,7 @@ void ShowDeleteUserScreen()
 
     vector<sUsers> vUsers = LoadUsersDataFromFile(UsersFileName);
     string UserName = ReadUserName();
-    DeleteUserByAccountNumber(UserName, vUsers);
+    DeleteUserByByUsername(UserName, vUsers);
 }
 
 sUsers ChangeUserRecord(string User)
@@ -1478,8 +1478,8 @@ void Login()
 
 int main()
 {
+    
     Login();
-
-    // system("pause>0");
+    
     return 0;
 }
