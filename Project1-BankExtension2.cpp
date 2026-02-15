@@ -1078,7 +1078,7 @@ vector<sUsers> SaveUsersDataToFile(string FileName, vector<sUsers> vUsers)
     return vUsers;
 }
 
-bool DeleteUserByAccountNumber(string Username, vector<sUsers> &vUsers, sUsers CurrentUser)
+bool DeleteUserByByUsername(string Username, vector<sUsers> &vUsers, sUsers CurrentUser)
 {
 
     sUsers User;
@@ -1137,7 +1137,7 @@ void ShowDeleteUserScreen(sUsers User)
 
     vector<sUsers> vUsers = LoadUsersDataFromFile(UsersFileName);
     string UserName = ReadUserName();
-    DeleteUserByAccountNumber(UserName, vUsers, User);
+    DeleteUserByByUsername(UserName, vUsers, User);
 }
 
 sUsers ChangeUserRecord(string User)
@@ -1438,10 +1438,5 @@ int main()
 {
     Login();
 
-    // cout << (1 & -1);
-    // 0001
-    //
-
-    // system("pause>0");
     return 0;
 }
