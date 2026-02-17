@@ -9,6 +9,7 @@ const string ClientsFileName = "Clients.txt";
 
 void ShowMainMenue();
 void ShowQuickWithdrawMenu();
+void ShowNormalWithdrawMenu();
 void Login();
 
 struct sClient
@@ -141,6 +142,13 @@ void GoBackToShowQuickWithdrawMenu()
     ShowQuickWithdrawMenu();
 }
 
+void GoBackToShowNormalWithdrawMenu()
+{
+    cout << "\n\nPress any key to continue...";
+    system("pause>0");
+    ShowNormalWithdrawMenu();
+}
+
 enum enMainMenueOptions
 {
     eQuickWithdraw = 1,
@@ -152,7 +160,7 @@ enum enMainMenueOptions
 
 short ReadQuickWithdrawMenu()
 {
-    cout << "Choose what do you want to do? [1 to 8]? \n";
+    cout << "\nChoose what do you want to do? [1 to 8]? ";
     short Choice = 0;
     cin >> Choice;
 
@@ -169,6 +177,7 @@ enum enQuickWithdrawMenuOptions
     eWithdraw600 = 6,
     eWithdraw800 = 7,
     eWithdraw1000 = 8,
+    Exit = 9,
 };
 
 string ConvertRecordToLine(sClient Client, string Seperator = "#//#")
@@ -227,6 +236,7 @@ bool DepositBalanceToClientByAccountNumber(string AccountNumber, double Amount, 
             if (C.AccountNumber == AccountNumber)
             {
                 C.AccountBalance += Amount;
+                CurrentClient = C;
                 SaveCleintsDataToFile(ClientsFileName, vClients);
                 cout << "\n\nDone Successfully. New balance is: " << C.AccountBalance;
 
@@ -239,15 +249,15 @@ bool DepositBalanceToClientByAccountNumber(string AccountNumber, double Amount, 
     return false;
 }
 
-void Withdraw(short Amount)
+void QuickWithdraw(short Amount)
 {
     vector<sClient> vClients = LoadCleintsDataFromFile(ClientsFileName);
+    // sClient Client;
     char Answer = 'n';
     if (Amount > CurrentClient.AccountBalance)
     {
         cout << "\nThe amount exceeds your balance ,make another choice";
         GoBackToShowQuickWithdrawMenu();
-        return;
     }
 
     DepositBalanceToClientByAccountNumber(CurrentClient.AccountNumber, Amount * -1, vClients);
@@ -259,11 +269,39 @@ void PerfromQuickWithdrawMenu(enQuickWithdrawMenuOptions QuickWithdrawMenu)
     {
     case enQuickWithdrawMenuOptions::eWithdraw20:
         system("cls");
-        Withdraw(20);
-        GoBackToMainMenue();
+        QuickWithdraw(20);
         break;
-
-    default:
+    case enQuickWithdrawMenuOptions::eWithdraw50:
+        system("cls");
+        QuickWithdraw(50);
+        break;
+    case enQuickWithdrawMenuOptions::eWithdraw100:
+        system("cls");
+        QuickWithdraw(100);
+        break;
+    case enQuickWithdrawMenuOptions::eWithdraw200:
+        system("cls");
+        QuickWithdraw(200);
+        break;
+    case enQuickWithdrawMenuOptions::eWithdraw400:
+        system("cls");
+        QuickWithdraw(400);
+        break;
+    case enQuickWithdrawMenuOptions::eWithdraw600:
+        system("cls");
+        QuickWithdraw(600);
+        break;
+    case enQuickWithdrawMenuOptions::eWithdraw800:
+        system("cls");
+        QuickWithdraw(800);
+        break;
+    case enQuickWithdrawMenuOptions::eWithdraw1000:
+        system("cls");
+        QuickWithdraw(1000);
+        break;
+    case enQuickWithdrawMenuOptions::Exit:
+        system("cls");
+        GoBackToMainMenue();
         break;
     }
 }
@@ -285,6 +323,36 @@ void ShowQuickWithdrawMenu()
     PerfromQuickWithdrawMenu((enQuickWithdrawMenuOptions)ReadQuickWithdrawMenu());
 }
 
+void NormalWithdraw()
+{
+    vector<sClient> vClients = LoadCleintsDataFromFile(ClientsFileName);
+    short Amount;
+
+    do
+    {
+        cout << "Enter an amount multipe of 5's ";
+        cin >> Amount;
+    } while (Amount % 5 != 0);
+
+    if (Amount > CurrentClient.AccountBalance)
+    {
+        cout << "\nThe amount exceeds your balance ,make another choice";
+        GoBackToShowNormalWithdrawMenu();
+    }
+
+    DepositBalanceToClientByAccountNumber(CurrentClient.AccountNumber, Amount * -1, vClients);
+}
+
+void ShowNormalWithdrawMenu()
+{
+    system("cls");
+    cout << "===================================\n";
+    cout << "\tNormal Withdraw Menu\n";
+    cout << "===================================\n";
+
+    NormalWithdraw();
+}
+
 void PerfromMainMenueOption(enMainMenueOptions MainMenueOption)
 {
 
@@ -294,6 +362,14 @@ void PerfromMainMenueOption(enMainMenueOptions MainMenueOption)
     {
         system("cls");
         ShowQuickWithdrawMenu();
+        GoBackToMainMenue();
+        break;
+    }
+
+    case enMainMenueOptions::eNormalWithdraw:
+    {
+        system("cls");
+        ShowNormalWithdrawMenu();
         GoBackToMainMenue();
         break;
     }
@@ -353,10 +429,6 @@ void Login()
 int main()
 {
     Login();
-        
 
     return 0;
-
 }
-
-
