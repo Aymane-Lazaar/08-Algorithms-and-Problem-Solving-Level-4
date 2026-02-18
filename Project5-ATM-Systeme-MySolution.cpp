@@ -155,7 +155,7 @@ enum enMainMenueOptions
     eNormalWithdraw = 2,
     eDeposit = 3,
     eCheckBalance = 4,
-    eLogout = 5,
+    eExit = 5,
 };
 
 short ReadQuickWithdrawMenu()
@@ -252,12 +252,13 @@ bool DepositBalanceToClientByAccountNumber(string AccountNumber, double Amount, 
 void QuickWithdraw(short Amount)
 {
     vector<sClient> vClients = LoadCleintsDataFromFile(ClientsFileName);
-    // sClient Client;
     char Answer = 'n';
+
     if (Amount > CurrentClient.AccountBalance)
     {
         cout << "\nThe amount exceeds your balance ,make another choice";
         GoBackToShowQuickWithdrawMenu();
+        return;
     }
 
     DepositBalanceToClientByAccountNumber(CurrentClient.AccountNumber, Amount * -1, vClients);
@@ -308,18 +309,16 @@ void PerfromQuickWithdrawMenu(enQuickWithdrawMenuOptions QuickWithdrawMenu)
 
 void ShowQuickWithdrawMenu()
 {
-    cout << "===================================\n";
-    cout << "\tQuick Withdraw Menu\n";
-    cout << "===================================\n";
-
-    cout << "\t[1] 20\t" << "[2] 50\n";
-    cout << "\t[3] 100\t" << "[4] 200\n";
-    cout << "\t[5] 400\t" << "[6] 600\n";
-    cout << "\t[7] 800\t" << "[8] 1000\n";
-    cout << "\t[9] Exit\t";
-    cout << "\n===================================\n";
-
-    cout << "\nYour Balance is " << CurrentClient.AccountBalance;
+    cout << "===========================================\n";
+    cout << "\t\tQucik Withdraw\n";
+    cout << "===========================================\n";
+    cout << "\t[1] 20\t\t[2] 50\n";
+    cout << "\t[3] 100\t\t[4] 200\n";
+    cout << "\t[5] 400\t\t[6] 600\n";
+    cout << "\t[7] 800\t\t[8] 1000\n";
+    cout << "\t[9] Exit\n";
+    cout << "===========================================\n";
+    cout << "Your Balance is " << CurrentClient.AccountBalance;
     PerfromQuickWithdrawMenu((enQuickWithdrawMenuOptions)ReadQuickWithdrawMenu());
 }
 
@@ -338,6 +337,42 @@ void NormalWithdraw()
     {
         cout << "\nThe amount exceeds your balance ,make another choice";
         GoBackToShowNormalWithdrawMenu();
+        return;
+        /*
+            How does the program handle this code?
+            When the client enters an amount greater than their balance 3 times, this is what happens behind the scenes:
+
+            1. First Attempt (Error):
+               - The program enters the NormalWithdraw() function.
+               - It detects that the amount exceeds the balance.
+               - It calls the GoBackToShowNormalWithdrawMenu() function.
+               - IMPORTANT NOTE: At this moment, the first function hasn't finished yet!
+                 The program pauses at this line and leaves the first "return;" command in memory (waiting for its turn).
+
+            2. Second Attempt (Error):
+               - The GoBack function opens the menu again, which in turn calls NormalWithdraw()
+                 as a brand-new attempt opened on top of the old one.
+               - The client makes a mistake again, so the program calls GoBack again.
+               - Now we have a second "return;" pending in memory.
+
+            3. Third Attempt (Error):
+               - A third screen opens.
+               - The client makes a mistake, a fourth menu opens, and we have a third "return;" pending in memory.
+
+            4. Fourth Attempt (Success):
+               - If the client finally enters a correct amount, the deduction is made, and the fourth function finishes successfully.
+
+            Stack Unwinding Phase:
+            Once the fourth operation succeeds and finishes, the computer starts going backward to clean the memory:
+            - It goes back to the pending third function, finds the "return;" command, and executes it (to end the third attempt).
+            - Then it goes back to the pending second function, finds the "return;" command, and executes it (to end the second attempt).
+            - Finally, it goes back to the pending first function, finds the "return;" command, and executes it (to end the first attempt).
+
+            Summary:
+            Every time the client makes a mistake and you call a new screen from within the current screen,
+            you are actually placing a new "layer" in the program's memory (Stack).
+            When finished, the program closes these layers one by one, executing "return;" for every layer that was opened.
+        */
     }
 
     DepositBalanceToClientByAccountNumber(CurrentClient.AccountNumber, Amount * -1, vClients);
@@ -351,6 +386,37 @@ void ShowNormalWithdrawMenu()
     cout << "===================================\n";
 
     NormalWithdraw();
+}
+
+void ShowDepositScreen()
+{
+    cout << "===========================================\n";
+    cout << "\t\tDeposit Screen\n";
+    cout << "===========================================\n";
+
+    sClient Client;
+
+    vector<sClient> vClients = LoadCleintsDataFromFile(ClientsFileName);
+
+    double Amount = 0;
+
+    do
+    {
+        cout << "\nPlease entera positive deposit Amount? ";
+        cin >> Amount;
+    } while (Amount <= 0);
+
+    DepositBalanceToClientByAccountNumber(CurrentClient.AccountNumber, Amount, vClients);
+}
+
+void ShowCheckBalanceScreen()
+{
+    cout << "===========================================\n";
+    cout << "\t\tCheck Balance Screen\n";
+    cout << "===========================================\n";
+
+    cout << "Your Balance is " << CurrentClient.AccountBalance;
+    GoBackToMainMenue();
 }
 
 void PerfromMainMenueOption(enMainMenueOptions MainMenueOption)
@@ -373,8 +439,22 @@ void PerfromMainMenueOption(enMainMenueOptions MainMenueOption)
         GoBackToMainMenue();
         break;
     }
+    case enMainMenueOptions::eDeposit:
+    {
+        system("cls");
+        ShowDepositScreen();
+        GoBackToMainMenue();
+        break;
+    }
+    case enMainMenueOptions::eCheckBalance:
+    {
+        system("cls");
+        ShowCheckBalanceScreen();
+        GoBackToMainMenue();
+        break;
+    }
 
-    case enMainMenueOptions::eLogout:
+    case enMainMenueOptions::eExit:
         system("cls");
         Login();
         break;
@@ -385,7 +465,7 @@ void ShowMainMenue()
 {
     system("cls");
     cout << "===========================================\n";
-    cout << "\t\tMain Menue Screen\n";
+    cout << "\t\tATM Main Menue Screen\n";
     cout << "===========================================\n";
     cout << "\t[1] Quick Withdraw.\n";
     cout << "\t[2] Normal Withdraw.\n";
@@ -393,6 +473,7 @@ void ShowMainMenue()
     cout << "\t[4] Check Balance.\n";
     cout << "\t[5] Logout.\n";
     cout << "===========================================\n";
+
     PerfromMainMenueOption((enMainMenueOptions)ReadMainMenueOption());
 }
 
@@ -406,9 +487,9 @@ void Login()
     do
     {
         system("cls");
-        cout << "\n---------------------------------\n";
+        cout << "===========================================\n";
         cout << "\tLogin Screen";
-        cout << "\n---------------------------------\n";
+        cout << "===========================================\n";
 
         if (LoginFaild)
             cout << "Invlaid Account Number/PinCode!\n";
