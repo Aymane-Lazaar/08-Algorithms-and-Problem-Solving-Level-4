@@ -77,6 +77,6 @@ I’ll be moving on to:
 
 ## 📬 Connect
 If you’d like to check my other projects or connect:
-- **GitHub:** [AhmedYaser-Mt](https://github.com/AhmedYaser-Mt)
-- **LinkedIn:** [Ahmed Yasser](https://www.linkedin.com/in/ahmed-yaser-mt)
+- **GitHub:** [Aymane-Lazaar](https://github.com/Aymane-Lazaar)
+- **LinkedIn:** [Aymane Lazaar](https://www.linkedin.com/in/aymane-lazaar)
 
