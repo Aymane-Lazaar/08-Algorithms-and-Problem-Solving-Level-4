@@ -7,7 +7,7 @@ long long ReadNumber()
 {
     long long Number;
 
-    cout << "Enter Number: ";
+    cout << "Enter Number: "
     cin >> Number;
 
     return Number;
@@ -190,3 +190,4 @@ int main()
     return 0;
 }
     */
+
